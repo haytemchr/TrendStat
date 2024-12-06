@@ -48,7 +48,7 @@
                         <h3>Instructions</h3>
                         <ul>
                             <li>Format .xlsx uniquement</li>
-                            <li class="translate" data-fr="Deux colonnes : X et Y" data-en="Two columns: X and Y">Deux colonnes : X et Y</li>
+                            <li>Deux colonnes : X et Y</li>
                             <li>Valeurs numériques</li>
                             <li>Pas d'en-têtes</li>
                         </ul>
@@ -58,12 +58,12 @@
                 <div class="card manual-input">
                     <h2>
                         <i class="fas fa-keyboard"></i> 
-                        <span class="translate" data-fr="Saisie Manuelle" data-en="Manual Input">Saisie Manuelle</span>
+                        <span>Saisie Manuelle</span>
                     </h2>
                     <div class="table-controls">
                         <button class="btn btn-add" onclick="addRow()">
                             <i class="fas fa-plus"></i> 
-                            <span class="translate" data-fr="Ajouter une ligne" data-en="Add Row">Ajouter une ligne</span>
+                            <span>Ajouter une ligne</span>
                         </button>
                     </div>
                     
@@ -73,7 +73,7 @@
                                 <tr>
                                     <th>X</th>
                                     <th>Y</th>
-                                    <th class="translate" data-fr="Actions" data-en="Actions">Actions</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="dataBody">
@@ -93,7 +93,7 @@
                     <div class="table-actions">
                         <button class="btn btn-primary" onclick="processData()">
                             <i class="fas fa-calculator"></i> 
-                            <span class="translate" data-fr="Calculer" data-en="Calculate">Calculer</span>
+                            <span>Calculer</span>
                         </button>
                     </div>
                 </div>
@@ -105,18 +105,18 @@
                 </div>
 
                 <div class="card results-details">
-                    <h2 class="translate" data-fr="Résultats de la Régression" data-en="Regression Results">Résultats de la Régression</h2>
+                    <h2>Résultats de la Régression</h2>
                     <div id="regressionEquation" class="equation"></div>
                 </div>
 
                 <div class="chart-actions">
                     <button id="downloadChartBtn" class="btn btn-secondary" style="display:none;" onclick="downloadChart()">
                         <i class="fas fa-download"></i> 
-                        <span class="translate" data-fr="Télécharger le graphique" data-en="Download Chart">Télécharger le graphique</span>
+                        <span>Télécharger le graphique</span>
                     </button>
                     <button class="btn btn-reset" onclick="resetAll()">
                         <i class="fas fa-redo"></i> 
-                        <span class="translate" data-fr="Réinitialiser" data-en="Reset">Réinitialiser</span>
+                        <span>Réinitialiser</span>
                     </button>
                 </div>
             </div>
@@ -125,45 +125,36 @@
                 <div class="card info-card">
                     <h2>
                         <i class="fas fa-info-circle"></i>
-                        <span class="translate" data-fr="Informations sur la Régression Linéaire" data-en="Linear Regression Information">Informations sur la Régression Linéaire</span>
+                        <span>Informations sur la Régression Linéaire</span>
                     </h2>
                     
                     <div class="info-content">
                         <section>
-                            <h3 class="translate" data-fr="La régression linéaire" data-en="Linear Regression">La régression linéaire</h3>
-                            <p class="translate" data-fr="La régression linéaire est une méthode statistique utilisée pour établir une relation entre deux variables, généralement une variable indépendante (ou explicative) et une variable dépendante (ou à expliquer). Elle permet de trouver la droite qui &quot;colle&quot; le mieux aux données, c'est-à-dire celle qui minimise la somme des carrés des écarts entre les valeurs observées et les valeurs prédites." 
-                               data-en="Linear regression is a statistical method used to establish a relationship between two variables, typically an independent (or explanatory) variable and a dependent (or response) variable. It finds the line that best &quot;fits&quot; the data by minimizing the sum of squared differences between observed and predicted values.">
+                            <h3>La régression linéaire</h3>
+                            <p>
                                 La régression linéaire est une méthode statistique utilisée pour établir une relation entre deux variables, généralement une variable indépendante (ou explicative) et une variable dépendante (ou à expliquer). Elle permet de trouver la droite qui "colle" le mieux aux données, c'est-à-dire celle qui minimise la somme des carrés des écarts entre les valeurs observées et les valeurs prédites.
                             </p>
                         </section>
 
                         <section>
-                            <h3 class="translate" data-fr="Calcul de la régression linéaire" data-en="Calculating Linear Regression">Calcul de la régression linéaire</h3>
-                            <p class="translate" data-fr="La régression linéaire est calculée à partir de la formule de la droite :" 
-                               data-en="Linear regression is calculated using the line equation:">La régression linéaire est calculée à partir de la formule de la droite :</p>
+                            <h3>Calcul de la régression linéaire</h3>
+                            <p>La régression linéaire est calculée à partir de la formule de la droite :</p>
                             <div class="formula">y = ax + b</div>
-                            <p class="translate" data-fr="Où :" data-en="Where:">Où :</p>
+                            <p>Où :</p>
                             <ul>
-                                <li class="translate" data-fr="<strong>y</strong> est la variable dépendante," 
-                                    data-en="<strong>y</strong> is the dependent variable,"><strong>y</strong> est la variable dépendante,</li>
-                                <li class="translate" data-fr="<strong>x</strong> est la variable indépendante," 
-                                    data-en="<strong>x</strong> is the independent variable,"><strong>x</strong> est la variable indépendante,</li>
-                                <li class="translate" data-fr="<strong>a</strong> est la pente de la droite (indiquant l'impact de x sur y)," 
-                                    data-en="<strong>a</strong> is the slope of the line (indicating the impact of x on y),"><strong>a</strong> est la pente de la droite (indiquant l'impact de x sur y),</li>
-                                <li class="translate" data-fr="<strong>b</strong> est l'ordonnée à l'origine (le point où la droite coupe l'axe des ordonnées)." 
-                                    data-en="<strong>b</strong> is the y-intercept (where the line crosses the y-axis)."><strong>b</strong> est l'ordonnée à l'origine (le point où la droite coupe l'axe des ordonnées).</li>
+                                <li><strong>y</strong> est la variable dépendante,</li>
+                                <li><strong>x</strong> est la variable indépendante,</li>
+                                <li><strong>a</strong> est la pente de la droite (indiquant l'impact de x sur y),</li>
+                                <li><strong>b</strong> est l'ordonnée à l'origine (le point où la droite coupe l'axe des ordonnées).</li>
                             </ul>
-                            <p class="translate" data-fr="Le calcul de <em>a</em> et <em>b</em> repose sur des méthodes comme les moindres carrés." 
-                               data-en="The calculation of <em>a</em> and <em>b</em> is based on methods such as least squares.">Le calcul de <em>a</em> et <em>b</em> repose sur des méthodes comme les moindres carrés.</p>
+                            <p>Le calcul de <em>a</em> et <em>b</em> repose sur des méthodes comme les moindres carrés.</p>
                         </section>
 
                         <section>
-                            <h3 class="translate" data-fr="Utilisation" data-en="Applications">Utilisation</h3>
-                            <p class="translate" data-fr="La régression linéaire est utilisée dans divers domaines, tels que l'économie, la biologie, la physique et les sciences sociales, pour :" 
-                               data-en="Linear regression is used in various fields, such as economics, biology, physics, and social sciences, for:">La régression linéaire est utilisée dans divers domaines, tels que l'économie, la biologie, la physique et les sciences sociales, pour :</p>
+                            <h3>Utilisation</h3>
+                            <p>La régression linéaire est utilisée dans divers domaines, tels que l'économie, la biologie, la physique et les sciences sociales, pour :</p>
                             <ul>
-                                <li class="translate" data-fr="Prédire une valeur (par exemple, estimer les ventes futures en fonction des dépenses publicitaires)," 
-                                    data-en="Predicting a value (for example, estimating future sales based on advertising spending),">Prédire une valeur (par exemple, estimer les ventes futures en fonction des dépenses publicitaires),</li>
+                                <li>Prédire une valeur (par exemple, estimer les ventes futures en fonction des dépenses publicitaires),</li>
                                 <li class="translate" data-fr="Modéliser des relations simples entre des variables," 
                                     data-en="Modeling simple relationships between variables,">Modéliser des relations simples entre des variables,</li>
                                 <li class="translate" data-fr="Analyser l'influence d'une variable sur une autre." 
