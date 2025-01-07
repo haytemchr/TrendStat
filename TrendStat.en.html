@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linear Regression Tool</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <!-- External Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="language-switch">
+            <button onclick="window.location.href='index.html'" class="btn btn-language">
+                <span class="lang-text">English <i class="fas fa-arrow-right"></i> Français</span>
+            </button>
+        </div>
+
+        <header>
+            <div class="logo">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <h1>Linear Regression Tool</h1>
+            <p class="subtitle">Data analysis and visualization</p>
+        </header>
+
+        <main>
+            <div class="data-input-section">
+                <div class="card excel-upload">
+                    <h2>
+                        <i class="fas fa-file-excel"></i> 
+                        <span>Download an Excel file</span>
+                    </h2>
+                    <input type="file" id="excelFileInput" accept=".xlsx" />
+                    
+                    <div class="file-instructions">
+                        <h3>Instructions</h3>
+                        <ul>
+                            <li>Format .xlsx only</li>
+                            <li>Two columns : X and Y</li>
+                            <li>Numeric values</li>
+                            <li>No headers</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card manual-input">
+                    <h2>
+                        <i class="fas fa-keyboard"></i> 
+                        <span>Manual Input</span>
+                    </h2>
+                    <div class="table-controls">
+                        <button class="btn btn-add" onclick="addRow()">
+                            <i class="fas fa-plus"></i> 
+                            <span>Add a line</span>
+                        </button>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table id="dataTable">
+                            <thead>
+                                <tr>
+                                    <th>X</th>
+                                    <th>Y</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dataBody">
+                                <tr>
+                                    <td><input type="number" step="0.01" class="x-input"></td>
+                                    <td><input type="number" step="0.01" class="y-input"></td>
+                                    <td>
+                                        <button class="btn btn-remove" onclick="removeRow(this)">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="table-actions">
+                        <button class="btn btn-primary" onclick="processData()">
+                            <i class="fas fa-calculator"></i> 
+                            <span>Calculate</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="results-section">
+                <div class="card chart-container">
+                    <canvas id="scatterChart"></canvas>
+                </div>
+
+                <div class="card results-details">
+                    <h2>
+                        <i class="fas fa-calculator"></i>
+                        <span>Regression Results</span>
+                    </h2>
+                    <div id="statisticsContent" class="statistics-content">
+                        <!-- Statistics will be inserted here -->
+                    </div>
+                </div>
+
+                <div class="chart-actions">
+                    <button id="downloadChartBtn" class="btn btn-secondary" style="display:none;" onclick="downloadChart()">
+                        <i class="fas fa-download"></i> 
+                        <span>Download Chart</span>
+                    </button>
+                    <button class="btn btn-reset" onclick="resetAll()">
+                        <i class="fas fa-redo"></i> 
+                        <span>Reset</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="function-input-section">
+                <div class="card function-plot">
+                    <h2>
+                        <i class="fas fa-square-root-alt"></i>
+                        <span>Function Plot</span>
+                    </h2>
+                    
+                    <div class="function-controls">
+                        <div class="input-group">
+                            <label>Function</label>
+                            <input type="text" id="functionInput" placeholder="ex: x^2, sin(x), cos(x)..." 
+                                   onkeypress="if(event.key === 'Enter') plotFunction()">
+                        </div>
+                        
+                        <div id="quadraticSolutions" class="solutions-display" style="display: none;"></div>
+                        
+                        <div class="range-inputs">
+                            <div class="x-controls">
+                                <div class="input-group">
+                                    <label>X min</label>
+                                    <input type="number" id="xMin" value="-10" step="1">
+                                </div>
+                                <div class="input-group">
+                                    <label>X max</label>
+                                    <input type="number" id="xMax" value="10" step="1">
+                                </div>
+                            </div>
+                            
+                            <div class="y-controls">
+                                <div class="input-group">
+                                    <label>Y min</label>
+                                    <input type="number" id="yMin" value="-10" step="1">
+                                </div>
+                                <div class="input-group">
+                                    <label>Y max</label>
+                                    <input type="number" id="yMax" value="10" step="1">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="plot-actions">
+                            <button class="btn btn-primary" onclick="plotFunction()">
+                                <i class="fas fa-chart-line"></i> 
+                                <span>Plot</span>
+                            </button>
+                            <div class="derivative-toggle">
+                                <input type="checkbox" id="showDerivative" onchange="toggleDerivative()">
+                                <label for="showDerivative">Show derivative</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="function-chart-container">
+                        <canvas id="functionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <div class="card info-card">
+                    <h2>
+                        <i class="fas fa-info-circle"></i>
+                        <span>Linear Regression Information</span>
+                    </h2>
+                    
+                    <div class="info-content">
+                        <section>
+                            <h3>Linear Regression</h3>
+                            <p>Linear regression is a statistical method used to establish a relationship between two variables, typically an independent (or explanatory) variable and a dependent (or explained) variable. It aims to find the line that "fits" the data best, meaning the one that minimizes the sum of the squared differences between the observed values and the predicted values.</p>
+                        </section>
+
+                        <section>
+                            <h3>Calculating Linear Regression</h3>
+                            <p>Linear regression is calculated using the line equation:</p>
+                            <div class="formula">y = ax + b</div>
+                            <p>Where :</p>
+                            <ul>
+                                <li><strong>y</strong> is the dependent variable,</li>
+                                <li><strong>x</strong> is the independent variable,</li>
+                                <li><strong>a</strong> is the slope of the line (indicating the impact of x on y),</li>
+                                <li><strong>b</strong> is the y-intercept (where the line crosses the y-axis).</li>
+                            </ul>
+                            <p>The calculation of <em>a</em> and <em>b</em> is based on methods such as least squares.</p>
+                        </section>
+
+                        <section>
+                            <h3>Applications</h3>
+                            <p>Linear regression is used in various fields, such as economics, biology, physics, and social sciences, for:</p>
+                            <ul>
+                                <li>Predicting a value (for example, estimating future sales based on advertising spending),</li>
+                                <li>Modeling simple relationships between variables,</li>
+                                <li>Analyzing the influence of one variable on another.</li>
+                            </ul>
+                            <p>It is particularly useful when data follows a linear trend (a direct relationship between variables).</p>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>2024 Haytem Chryat. All rights reserved.</p>
+            <div class="social-links">
+                <a href="https://github.com/haytemchr" target="_blank">
+                    <i class="fab fa-github"></i>
+                </a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="script-en.js"></script>
+</body>
+</html>
