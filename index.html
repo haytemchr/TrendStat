@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linear Regression Tool | Outil de Régression Linéaire</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <!-- External Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="language-switch">
+            <button onclick="window.location.href='TrendStat.en.html'" class="btn btn-language">
+                <span class="lang-text">Français <i class="fas fa-arrow-right"></i> English</span>
+            </button>
+        </div>
+
+        <header>
+            <div class="logo">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <h1 class="translate" data-fr="Outil de Régression Linéaire" data-en="Linear Regression Tool">Outil de Régression Linéaire</h1>
+            <p class="subtitle translate" data-fr="Analyse et visualisation de données" data-en="Data analysis and visualization">Analyse et visualisation de données</p>
+        </header>
+
+        <main>
+            <div class="data-input-section">
+                <div class="card excel-upload">
+                    <h2>
+                        <i class="fas fa-file-excel"></i> 
+                        <span class="translate" data-fr="Télécharger un fichier Excel" data-en="Upload Excel File">Télécharger un fichier Excel</span>
+                    </h2>
+                    <input type="file" id="excelFileInput" accept=".xlsx" />
+                    
+                    <div class="file-instructions">
+                        <h3 class="translate" data-fr="Instructions" data-en="Instructions">Instructions</h3>
+                        <ul>
+                            <li class="translate" data-fr="Format .xlsx uniquement" data-en=".xlsx format only">Format .xlsx uniquement</li>
+                            <li class="translate" data-fr="Deux colonnes : X et Y" data-en="Two columns: X and Y">Deux colonnes : X et Y</li>
+                            <li class="translate" data-fr="Valeurs numériques" data-en="Numeric values">Valeurs numériques</li>
+                            <li class="translate" data-fr="Pas d'en-têtes" data-en="No headers">Pas d'en-têtes</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card manual-input">
+                    <h2>
+                        <i class="fas fa-keyboard"></i> 
+                        <span class="translate" data-fr="Saisie Manuelle" data-en="Manual Input">Saisie Manuelle</span>
+                    </h2>
+                    <div class="table-controls">
+                        <button class="btn btn-add" onclick="addRow()">
+                            <i class="fas fa-plus"></i> 
+                            <span class="translate" data-fr="Ajouter une ligne" data-en="Add Row">Ajouter une ligne</span>
+                        </button>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table id="dataTable">
+                            <thead>
+                                <tr>
+                                    <th>X</th>
+                                    <th>Y</th>
+                                    <th class="translate" data-fr="Actions" data-en="Actions">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dataBody">
+                                <tr>
+                                    <td><input type="number" step="0.01" class="x-input"></td>
+                                    <td><input type="number" step="0.01" class="y-input"></td>
+                                    <td>
+                                        <button class="btn btn-remove" onclick="removeRow(this)">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="table-actions">
+                        <button class="btn btn-primary" onclick="processData()">
+                            <i class="fas fa-calculator"></i> 
+                            <span class="translate" data-fr="Calculer" data-en="Calculate">Calculer</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="results-section">
+                <div class="card chart-container">
+                    <canvas id="scatterChart"></canvas>
+                </div>
+
+                <div class="card results-details">
+                    <h2>
+                        <i class="fas fa-calculator"></i>
+                        <span>Résultats de la régression</span>
+                    </h2>
+                    <div id="statisticsContent" class="statistics-content">
+                        <!-- Les statistiques seront insérées ici -->
+                    </div>
+                </div>
+
+                <div class="chart-actions">
+                    <button id="downloadChartBtn" class="btn btn-secondary" style="display:none;" onclick="downloadChart()">
+                        <i class="fas fa-download"></i> 
+                        <span class="translate" data-fr="Télécharger le graphique" data-en="Download Chart">Télécharger le graphique</span>
+                    </button>
+                    <button class="btn btn-reset" onclick="resetAll()">
+                        <i class="fas fa-redo"></i> 
+                        <span class="translate" data-fr="Réinitialiser" data-en="Reset">Réinitialiser</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="function-input-section">
+                <div class="card function-plot">
+                    <h2>
+                        <i class="fas fa-square-root-alt"></i>
+                        <span class="translate" data-fr="Tracé de Fonction" data-en="Function Plot">Tracé de Fonction</span>
+                    </h2>
+                    
+                    <div class="function-controls">
+                        <div class="input-group">
+                            <label class="translate" data-fr="Fonction" data-en="Function">Fonction</label>
+                            <input type="text" id="functionInput" placeholder="ex: x^2, sin(x), cos(x)..." 
+                                   onkeypress="if(event.key === 'Enter') plotFunction()">
+                        </div>
+                        
+                        <div id="quadraticSolutions" class="solutions-display" style="display: none;"></div>
+                        
+                        <div class="range-inputs">
+                            <div class="x-controls">
+                                <div class="input-group">
+                                    <label class="translate" data-fr="X min" data-en="X min">X min</label>
+                                    <input type="number" id="xMin" value="-10" step="1">
+                                </div>
+                                <div class="input-group">
+                                    <label class="translate" data-fr="X max" data-en="X max">X max</label>
+                                    <input type="number" id="xMax" value="10" step="1">
+                                </div>
+                            </div>
+                            
+                            <div class="y-controls">
+                                <div class="input-group">
+                                    <label class="translate" data-fr="Y min" data-en="Y min">Y min</label>
+                                    <input type="number" id="yMin" value="-10" step="1">
+                                </div>
+                                <div class="input-group">
+                                    <label class="translate" data-fr="Y max" data-en="Y max">Y max</label>
+                                    <input type="number" id="yMax" value="10" step="1">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="plot-actions">
+                            <button class="btn btn-primary" onclick="plotFunction()">
+                                <i class="fas fa-chart-line"></i> 
+                                <span class="translate" data-fr="Tracer" data-en="Plot">Tracer</span>
+                            </button>
+                            <div class="derivative-toggle">
+                                <input type="checkbox" id="showDerivative" onchange="toggleDerivative()">
+                                <label for="showDerivative" class="translate" data-fr="Afficher la dérivée" data-en="Show derivative">Afficher la dérivée</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="function-chart-container">
+                        <canvas id="functionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <div class="card info-card">
+                    <h2>
+                        <i class="fas fa-info-circle"></i>
+                        <span class="translate" data-fr="Informations sur la Régression Linéaire" data-en="Linear Regression Information">Informations sur la Régression Linéaire</span>
+                    </h2>
+                    
+                    <div class="info-content">
+                        <section>
+                            <h3 class="translate" data-fr="La régression linéaire" data-en="Linear Regression">La régression linéaire</h3>
+                            <p class="translate" data-fr="La régression linéaire est une méthode statistique utilisée pour établir une relation entre deux variables, généralement une variable indépendante (ou explicative) et une variable dépendante (ou à expliquer). Elle permet de trouver la droite qui &quot;colle&quot; le mieux aux données, c'est-à-dire celle qui minimise la somme des carrés des écarts entre les valeurs observées et les valeurs prédites." 
+                               data-en="Linear regression is a statistical method used to establish a relationship between two variables, typically an independent (or explanatory) variable and a dependent (or response) variable. It finds the line that best &quot;fits&quot; the data by minimizing the sum of squared differences between observed and predicted values.">
+                                La régression linéaire est une méthode statistique utilisée pour établir une relation entre deux variables, généralement une variable indépendante (ou explicative) et une variable dépendante (ou à expliquer). Elle permet de trouver la droite qui "colle" le mieux aux données, c'est-à-dire celle qui minimise la somme des carrés des écarts entre les valeurs observées et les valeurs prédites.
+                            </p>
+                        </section>
+
+                        <section>
+                            <h3 class="translate" data-fr="Calcul de la régression linéaire" data-en="Calculating Linear Regression">Calcul de la régression linéaire</h3>
+                            <p class="translate" data-fr="La régression linéaire est calculée à partir de la formule de la droite :" 
+                               data-en="Linear regression is calculated using the line equation:">La régression linéaire est calculée à partir de la formule de la droite :</p>
+                            <div class="formula">y = ax + b</div>
+                            <p class="translate" data-fr="Où :" data-en="Where:">Où :</p>
+                            <ul>
+                                <li class="translate" data-fr="<strong>y</strong> est la variable dépendante," 
+                                    data-en="<strong>y</strong> is the dependent variable,"><strong>y</strong> est la variable dépendante,</li>
+                                <li class="translate" data-fr="<strong>x</strong> est la variable indépendante," 
+                                    data-en="<strong>x</strong> is the independent variable,"><strong>x</strong> est la variable indépendante,</li>
+                                <li class="translate" data-fr="<strong>a</strong> est la pente de la droite (indiquant l'impact de x sur y)," 
+                                    data-en="<strong>a</strong> is the slope of the line (indicating the impact of x on y),"><strong>a</strong> est la pente de la droite (indiquant l'impact de x sur y),</li>
+                                <li class="translate" data-fr="<strong>b</strong> est l'ordonnée à l'origine (le point où la droite coupe l'axe des ordonnées)." 
+                                    data-en="<strong>b</strong> is the y-intercept (where the line crosses the y-axis)."><strong>b</strong> est l'ordonnée à l'origine (le point où la droite coupe l'axe des ordonnées).</li>
+                            </ul>
+                            <p class="translate" data-fr="Le calcul de <em>a</em> et <em>b</em> repose sur des méthodes comme les moindres carrés." 
+                               data-en="The calculation of <em>a</em> and <em>b</em> is based on methods such as least squares.">Le calcul de <em>a</em> et <em>b</em> repose sur des méthodes comme les moindres carrés.</p>
+                        </section>
+
+                        <section>
+                            <h3 class="translate" data-fr="Utilisation" data-en="Applications">Utilisation</h3>
+                            <p class="translate" data-fr="La régression linéaire est utilisée dans divers domaines, tels que l'économie, la biologie, la physique et les sciences sociales, pour :" 
+                               data-en="Linear regression is used in various fields, such as economics, biology, physics, and social sciences, for:">La régression linéaire est utilisée dans divers domaines, tels que l'économie, la biologie, la physique et les sciences sociales, pour :</p>
+                            <ul>
+                                <li class="translate" data-fr="Prédire une valeur (par exemple, estimer les ventes futures en fonction des dépenses publicitaires)," 
+                                    data-en="Predicting a value (for example, estimating future sales based on advertising spending),">Prédire une valeur (par exemple, estimer les ventes futures en fonction des dépenses publicitaires),</li>
+                                <li class="translate" data-fr="Modéliser des relations simples entre des variables," 
+                                    data-en="Modeling simple relationships between variables,">Modéliser des relations simples entre des variables,</li>
+                                <li class="translate" data-fr="Analyser l'influence d'une variable sur une autre." 
+                                    data-en="Analyzing the influence of one variable on another.">Analyser l'influence d'une variable sur une autre.</li>
+                            </ul>
+                            <p class="translate" data-fr="Elle est particulièrement utile lorsque les données suivent une tendance linéaire (une relation directe entre les variables)." 
+                               data-en="It is particularly useful when data follows a linear trend (a direct relationship between variables).">Elle est particulièrement utile lorsque les données suivent une tendance linéaire (une relation directe entre les variables).</p>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>
+                <span class="translate" data-fr="2024 Haytem Chryat. Tous droits réservés." 
+                      data-en="2024 Haytem Chryat. All rights reserved.">2024 Haytem Chryat. Tous droits réservés.</span>
+            </p>
+            <div class="social-links">
+                <a href="https://github.com/haytemchr" target="_blank">
+                    <i class="fab fa-github"></i>
+                </a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/1.2.1/chartjs-plugin-zoom.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
+</body>
+</html>
